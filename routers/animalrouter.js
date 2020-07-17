@@ -40,23 +40,56 @@ module.exports = {  //middleware
         let id = new mongoose.Types.ObjectId(req.params.id);
         Animal.findOne({ _id: id })
             .exec(function (err, result) {
-                if (err) return res.status(400).json(err);
-                if (!result) return res.status(404).json();
-                res.json(result);
+                if (err) {
+                    return res.status(500).json({
+                        'success': false,
+                        'message': err.toString()
+                    })
+                }
+
+                if (!result) {
+                    return res.status(404).json({
+                        'success': false,
+                        'message': 'Not found'
+                    });
+                }
+
+                res.json({
+                    'success': true,
+                    'data': result
+                });
             });
     },
     updateOne: function (req, res) { //updates the document
         let id = new mongoose.Types.ObjectId(req.params.id);
         Animal.findOneAndUpdate({ _id: id }, req.body, function (err, result) {
-            if (err) return res.status(500).json(err);
-            res.json(result);
+            if (err) {
+                return res.status(500).json({
+                    'success': false,
+                    'message': err.toString()
+                })
+            }
+
+            res.json({
+                'success': true,
+                'data': result
+            });
         });
     },
     deleteOne: function (req, res) { // deletes one
         let id = new mongoose.Types.ObjectId(req.params.id);
         Animal.findOneAndDelete({ _id: id}, function (err) {
-            if (err) return res.status(400).json(err);
-            res.json();
+            if (err) {
+                return res.status(500).json({
+                    'success': false,
+                    'message': err.toString()
+                })
+            }
+
+            res.json({
+                'success': true,
+                'message': 'Animal deleted successfully'
+            });
         });
     }
 };
