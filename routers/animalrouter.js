@@ -19,6 +19,41 @@ module.exports = {  //middleware
 
         });
     },
+    getByFilter: function(req, res) {
+        Animal.aggregate([{
+            $group: {
+                _id: "$eatingGroup"
+            }
+        }]).exec(function (err, result) {
+            if(err) {
+                return res.status(500).json({
+                    'success': false,
+                    'error': err
+                });
+            }
+
+            result.forEach(function(group, index) {
+                Animal.where('eatingGroup').equals(group._id).exec(function (err, data) {
+
+                    if(err) {
+                        return res.status(500).json({
+                            'success': false,
+                            'error': err
+                        });
+                    }
+
+                    result[index].data = data;
+
+                    if(index == result.length - 1) {
+                        res.json({
+                            'success': true,
+                            'data': result
+                        });
+                    }
+                });
+            });
+        })
+    },
     createOne: function (req, res) { //creates
         req.body._id = new mongoose.Types.ObjectId();
         req.body.eatingGroup = req.body.eatingGroup.toLowerCase();

@@ -19,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/animals', {useUnifiedTopology: true,
 //DELETE: This method is used to remove an existing row or document from the database.
 //Pet RESTFul endpoionts 
 app.get('/', animal.getAll);
+app.get('/filter', animal.getByFilter);
 app.post('/add', animal.createOne);
 app.get('/:id', animal.getOne);
 app.post('/:id/update', animal.updateOne);
